@@ -28,7 +28,7 @@ const categories = {
 async function main() {
   const arr = Object.keys(categories)
   for (let x = 0; x < arr.length; x++) {
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 14; i++) {
       const url = 'https://steamspy.com/api.php?request=appdetails&appid=' + categories[arr[x]][i]
       const obj = await api_request(url)
 
