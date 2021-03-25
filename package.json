@@ -6,7 +6,6 @@
   "scripts": {
     "test": "nodemon app.js",
     "start": "node app.js",
-    "build": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -26,5 +25,4 @@
   "engines": {
     "node": "14.15.4"
   },
-  "heroku-run-build-script": true
 }
