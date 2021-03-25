@@ -19,7 +19,8 @@
   "homepage": "https://github.com/RonanMcdonald/SteamStoreAPI#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "request": "^2.88.2"
   },
   "engines": {
     "node": "14.15.4"
