@@ -40,13 +40,10 @@ async function main() {
 
     GameData.fps[i] = data
   }
-  return GameData
 }
 
 main()
 
 exports.default = async (req, res) => {
-  await main().then((data) => {
-    res.send(data)
-  })
+  res.send(GameData)
 }
