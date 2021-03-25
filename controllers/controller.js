@@ -1,6 +1,6 @@
 var request = require('request')
 
-const api_request = (url) => {
+async function api_request(url) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       request(url, (err, response, body) => {
@@ -12,31 +12,41 @@ const api_request = (url) => {
   })
 }
 
-main()
-
-const GameData = []
-
-async function main() {
-  const url = 'https://steamspy.com/api.php?request=appdetails&appid=218620'
-
-  const obj = await api_request(url)
-
-  const data = {
-    app_id: obj.appid,
-    name: obj.name,
-    developer: obj.developer,
-    publisher: obj.publisher,
-    languages: obj.languages,
-    score: {
-      positive: obj.positive,
-      negative: obj.negative,
-    },
-  }
-
-  GameData.push(data)
-  console.log(data)
+const GameData = {
+  fps: {},
 }
 
+const categories = {
+  fps: ['218620', '218620', '218620', '218620', '218620', '218620', '218620', '218620', '218620', '218620', '218620', '218620'],
+}
+
+async function main() {
+  for (let i = 0; i < categories.fps.length; i++) {
+    const url = 'https://steamspy.com/api.php?request=appdetails&appid=' + categories.fps[i]
+
+    const obj = await api_request(url)
+
+    const data = {
+      app_id: obj.appid,
+      name: obj.name,
+      developer: obj.developer,
+      publisher: obj.publisher,
+      languages: obj.languages,
+      score: {
+        positive: obj.positive,
+        negative: obj.negative,
+      },
+    }
+
+    GameData.fps[i] = data
+  }
+  return GameData
+}
+
+main()
+
 exports.default = async (req, res) => {
-  res.send(GameData)
+  await main().then((data) => {
+    res.send(data)
+  })
 }
