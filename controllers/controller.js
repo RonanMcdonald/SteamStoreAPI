@@ -8,7 +8,7 @@ async function api_request(url) {
           resolve(JSON.parse(body))
         }
       })
-    }, 1000)
+    }, 1500)
   })
 }
 
@@ -17,7 +17,7 @@ const GameData = {
 }
 
 const categories = {
-  fps: ['218620'],
+  fps: ['730', '440', '578080', '218620', '444090', '272060', '1172470', '1229490', '552520', '1085660', '359550', '252490', '550', '230410'],
 }
 
 async function main() {
