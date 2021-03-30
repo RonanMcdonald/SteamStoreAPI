@@ -170,7 +170,15 @@ function strip_html(obj) {
   return obj // I dont understand regex
 }
 
+// Run on deploy
 generate_game_data()
+
 exports.default = async (req, res) => {
-  res.send(GameData)
+  const path = 'data/game_data.json'
+  if (fs.existsSync(path)) {
+    res.send(GameData)
+  } else {
+    await generate_game_data()
+    res.send(GameData)
+  }
 }
