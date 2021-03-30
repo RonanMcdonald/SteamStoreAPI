@@ -170,14 +170,18 @@ function strip_html(obj) {
   return obj // I dont understand regex
 }
 
-// Run on deploy
-generate_game_data()
+// try {
+//   fs.unlinkSync('data/game_data.json')
+// } catch (err) {
+//   console.error(err)
+// }
 
 exports.default = async (req, res) => {
   const path = 'data/game_data.json'
   if (fs.existsSync(path)) {
     res.send(GameData)
   } else {
+    console.log('Please wait... Generating data')
     await generate_game_data()
     res.send(GameData)
   }
