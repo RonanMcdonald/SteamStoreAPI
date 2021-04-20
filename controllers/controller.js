@@ -1,5 +1,7 @@
 var request = require('request')
 var fs = require('fs')
+const { reset } = require('nodemon')
+const { parse } = require('path')
 
 async function api_request(url) {
   return new Promise((resolve, reject) => {
@@ -13,35 +15,32 @@ async function api_request(url) {
   })
 }
 
-const GameData = {
-  fps: {},
-  fantasy: {},
-  horror: {},
-}
-
 const categories = {
-  fps: ['730', '440', '578080', '218620', '444090', '272060', '1172470', '1229490', '552520', '1085660', '359550', '252490', '550', '230410'],
-  fantasy: ['306130', '594570', '444090', '1086940', '364360', '262060', '356190', '508440', '570', '292030', '582010', '582010', '435150', '489830'],
-  horror: ['381210', '550', '232090', '242760', '322330', '221100', '305620', '412020', '379720', '500', '883710', '493520', '299740', '438740'],
+  'First Person Shooter ': ['730', '440', '578080', '218620', '444090', '272060', '1172470', '1229490', '552520', '1085660', '359550', '252490', '550', '230410'],
+  'Fantasy ': ['306130', '594570', '444090', '1086940', '364360', '262060', '356190', '508440', '570', '292030', '582010', '582010', '435150', '489830'],
+  'Horror ': ['381210', '550', '232090', '242760', '322330', '221100', '305620', '412020', '379720', '500', '883710', '493520', '299740', '438740'],
 }
 
-// Debug version
 // const categories = {
-//   fps: ['10'],
-//   fantasy: ['306130'],
+//   'First Person Shooter': ['730', '440'],
+//   'Fantasy ': ['306130'],
 // }
 
 async function generate_game_data() {
   const arr = Object.keys(categories)
+  const GameData = {}
 
   console.log('\n--- Generating game data ---') //debug check max time to get response
   console.log('MAX TIME: %i s', ((300 * (arr.length * categories[arr[0]].length)) / 1000) % 60)
 
-  for (let x = 0; x < arr.length; x++) {
+  for (var x = 0; x < arr.length; x++) {
     //debug: Game Category being checked
     console.log('\nCATEGORY:', arr[x])
 
-    for (let i = 0; i < categories[arr[x]].length; i++) {
+    var tempArr = []
+    var tempObj = {}
+
+    for (var i = 0; i < categories[arr[x]].length; i++) {
       var spyObj = await api_request('https://steamspy.com/api.php?request=appdetails&appid=' + categories[arr[x]][i])
       var powObjInit = await api_request('https://store.steampowered.com/api/appdetails?appids=' + categories[arr[x]][i] + '&cc=gb&l=en&format=json')
       var powObj = powObjInit[Object.keys(powObjInit)]['data']
@@ -66,18 +65,22 @@ async function generate_game_data() {
         support_info: get_support_info(powObj),
         movies: get_movies(powObj),
         description: get_description(powObj),
+        tags: get_tags(spyObj),
         score: {
+          total: spyObj.positive + spyObj.negative,
           positive: spyObj.positive,
           negative: spyObj.negative,
         },
       }
-      GameData[arr[x]][i] = data
+      // GameData[arr[x]][i] = data
+      tempArr.push(data)
     }
+
+    GameData[arr[x]] = tempArr
   }
 
   let file = JSON.stringify(GameData, null, 2)
   fs.writeFileSync('data/game_data.json', file)
-  //console.log(GameData)
 }
 
 // Check if game is free
@@ -96,6 +99,7 @@ function check_if_free(obj) {
     newObj.currency = obj['price_overview'].currency
     newObj.initial = obj['price_overview'].initial
     newObj.final = obj['price_overview'].final
+    newObj.final_formatted = obj['price_overview'].final_formatted
     newObj.discount_percent = obj['price_overview'].discount_percent
   }
   return newObj
@@ -157,6 +161,14 @@ function get_requirements(obj) {
   return newObj
 }
 
+function get_tags(obj) {
+  const arr = []
+  for (var i = 0; i < 5; i++) {
+    arr[i] = Object.keys(obj.tags)[i]
+  }
+  return arr
+}
+
 // Check if input prop exists
 function check_exists(property) {
   return typeof property == 'undefined' ? false : true
@@ -170,19 +182,21 @@ function strip_html(obj) {
   return obj // I dont understand regex
 }
 
-// try {
-//   fs.unlinkSync('data/game_data.json')
-// } catch (err) {
-//   console.error(err)
-// }
-
+// generate_game_data()
 exports.default = async (req, res) => {
   const path = 'data/game_data.json'
   if (fs.existsSync(path)) {
-    res.send(GameData)
+    console.log('\nData exists\n')
+
+    fs.readFile(path, 'utf8', (err, jsonString) => {
+      res.json(JSON.parse(jsonString))
+    })
   } else {
-    console.log('Please wait... Generating data')
+    console.log('\nPlease wait... Generating data\n')
+
     await generate_game_data()
-    res.send(GameData)
+    fs.readFile(path, 'utf8', (err, jsonString) => {
+      res.json(JSON.parse(jsonString))
+    })
   }
 }
