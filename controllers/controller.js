@@ -140,8 +140,8 @@ function get_movies(obj) {
 function get_description(obj) {
   const newObj = {
     short_desc: check_exists(obj['short_description']) ? obj['short_description'] : null,
-    long_desc: check_exists(obj['detailed_description']) ? obj['short_description'] : null,
-    about_desc: check_exists(obj['about_the_game']) ? obj['short_description'] : null,
+    long_desc: check_exists(obj['detailed_description']) ? obj['detailed_description'] : null,
+    about_desc: check_exists(obj['about_the_game']) ? obj['about_the_game'] : null,
   }
   return newObj
 }
