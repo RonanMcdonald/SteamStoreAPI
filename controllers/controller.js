@@ -139,12 +139,22 @@ function get_movies(obj) {
 // Get game descriptions. Short, Long & About
 function get_description(obj) {
   const newObj = {
-    short_desc: check_exists(obj['short_description']) ? strip_html(obj['short_description']) : null,
-    long_desc: check_exists(obj['detailed_description']) ? strip_html(obj['detailed_description']) : null,
-    about_desc: check_exists(obj['about_the_game']) ? strip_html(obj['about_the_game']) : null,
+    short_desc: check_exists(obj['short_description']) ? obj['short_description'] : null,
+    long_desc: check_exists(obj['detailed_description']) ? obj['short_description'] : null,
+    about_desc: check_exists(obj['about_the_game']) ? obj['short_description'] : null,
   }
   return newObj
 }
+
+///// OLD OLD OLD
+// function get_description(obj) {
+//   const newObj = {
+//     short_desc: check_exists(obj['short_description']) ? strip_html(obj['short_description']) : null,
+//     long_desc: check_exists(obj['detailed_description']) ? strip_html(obj['detailed_description']) : null,
+//     about_desc: check_exists(obj['about_the_game']) ? strip_html(obj['about_the_game']) : null,
+//   }
+//   return newObj
+// }
 
 // Get game requirements. Minimum & Recommended
 function get_requirements(obj) {
