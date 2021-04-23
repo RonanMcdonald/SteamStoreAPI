@@ -192,7 +192,7 @@ function strip_html(obj) {
   return obj // I dont understand regex
 }
 
-// generate_game_data()
+generate_game_data()
 exports.default = async (req, res) => {
   const path = 'data/game_data.json'
   if (fs.existsSync(path)) {
