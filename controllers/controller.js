@@ -55,7 +55,7 @@ async function generate_game_data() {
         publisher: spyObj.publisher,
         languages: spyObj.languages,
         website: powObj['website'],
-        background: powObj['background'],
+        // background: powObj['background'],
         header_image: powObj['header_image'],
         release_date: powObj['release_date']['date'],
         coming_soon: powObj['release_date']['coming_soon'],
@@ -108,14 +108,22 @@ function check_if_free(obj) {
 // Get game images. Thumbnail & Full
 function get_images(obj) {
   var arr = []
+  var i = 0
+  console.log(obj['screenshots'])
+
   for (value in obj['screenshots']) {
+    console.log(i)
     var x = {
-      thumbnail: obj['screenshots'][value]['path_thumbnail'],
-      full: obj['screenshots'][value]['path_full'],
+      thumbnail: obj['screenshots'][i]['path_thumbnail'],
+      full: obj['screenshots'][i]['path_full'],
     }
+    i++
     arr.push(x)
+
+    if (i == 5) {
+      return arr
+    }
   }
-  return arr
 }
 
 // Get game support info. Email & Website
@@ -141,7 +149,7 @@ function get_description(obj) {
   const newObj = {
     short_desc: check_exists(obj['short_description']) ? obj['short_description'] : null,
     long_desc: check_exists(obj['detailed_description']) ? obj['detailed_description'] : null,
-    about_desc: check_exists(obj['about_the_game']) ? obj['about_the_game'] : null,
+    //about_desc: check_exists(obj['about_the_game']) ? obj['about_the_game'] : null,
   }
   return newObj
 }
@@ -173,7 +181,7 @@ function get_requirements(obj) {
 
 function get_tags(obj) {
   const arr = []
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < 6; i++) {
     arr[i] = Object.keys(obj.tags)[i]
   }
   return arr
